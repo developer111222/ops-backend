@@ -7,13 +7,16 @@ const { default: slugify } = require('slugify');
 exports.createBlog = async (req, res) => {
     // console.log(req.body,req.file)
     try {
-        const { title, content, metatitle, metadescription, metakeywords,author,category} = req.body;
-        const image= req.cloudinaryImages;
-        // const author = req.user.id;
+
+        // console.log(req.body,"req.body")
+        const { title, content, metatitle, metadescription, metakeywords,category,excerpt} = req.body;
+        const images= req.cloudinaryImages;
+        const author = req.user.id;
+        // console.log(req.user,"author")
         // const category = req.body.category;
 
         // Validate incoming data
-        if (!title || !content || !image) {
+        if (!title || !content || !images) {
             return res.status(400).json({ message: 'Please provide all required fields' });
         }
 
@@ -24,9 +27,10 @@ exports.createBlog = async (req, res) => {
             metatitle,
             metadescription,
             metakeywords,
-            image,  
+            images,  
             author,
-            category
+            category,
+            excerpt
         });
 
         // Save the blog to the database
@@ -48,7 +52,7 @@ exports.createBlog = async (req, res) => {
 
 exports.getAllBlogs = async (req, res, next) => {
     try {
-        const blogs = await Blog.find().populate('author', 'username').populate('category', 'category slug').sort({ createdAt: -1 });
+        const blogs = await Blog.find().populate('author', 'username').populate('category', 'categoryname slug').sort({ createdAt: -1 });
         res.status(200).json(blogs);
     } catch (error) {
         return res.status(400).json({ message: error.message });
@@ -93,8 +97,9 @@ exports.getBlogByCategory = async (req, res) => {
 exports.getBlogBySlug = async (req, res) => {
         try {
             const slug = req.params.id;
+            console.log(slug,"slug")
           
-            const blog = await Blog.findOne({ slug }).populate('author', 'username');
+            const blog = await Blog.findById( slug ).populate('author', 'username');
             if (!blog) return res.status(404).json({ message: 'Blog not found' });
             res.status(200).json(blog);
         } catch (error) {
@@ -109,55 +114,37 @@ exports.getBlogBySlug = async (req, res) => {
 
     exports.updateBlog = async (req, res) => {
         try {
-            const slug = req.params.id;
-     console.log(slug,"slug",req.body)
-            const { title, content, metatitle, metadescription } = req.body;
-            const image = req.file ? req.file.filename : null;
-            
-            const blog = await Blog.findOne({ slug: req.params.id });
-            if (!blog) {
-                return res.status(404).json({ message: 'Blog not found' });
-            }
-            
-            // Regenerate slug if the title has changed
-            if (title && title !== blog.title) {
-                blog.title = title;
-                blog.slug = slugify(title, { lower: true, strict: true }); // Update slug
-            }
-            
-            // Check if slug already exists (excluding the current blog)
-            if (req.body.slug && req.body.slug !== blog.slug) {
-                const existingSlug = await Blog.findOne({ slug: req.body.slug });
-                if (existingSlug) {
-                    return res.status(400).json({ message: 'Slug already in use' });
-                }
-            }
-            
-            const updatedData = {};
-            
-            // Update fields based on the request body
-            if (title) updatedData.title = title;
-            if (content) updatedData.content = content;
-            if (metatitle) updatedData.metatitle = metatitle;
-            if (metadescription) updatedData.metadescription = metadescription;
-            
-            // Don't update the image if no new image is uploaded
-            if (image !== null) {
-                updatedData.image = image;
-            } else {
-                // Keep the old image if no new image is uploaded
-                updatedData.image = blog.image;
-            }
-            
-            // Save the blog with the updated slug and data
-            const updatedBlog = await blog.save();  // Use save() to trigger the pre-save hook
-            
-            return res.status(200).json({ message: 'Blog updated successfully', blog: updatedBlog });
+          const slug = req.params.id;
+          const { title, content, metatitle, metadescription, metakeywords, category, excerpt } = req.body;
+      
+        console.log(req.body,"req.body")
+      
+         const img= req.cloudinaryImages;
+      console.log(img,"img")
 
+            // Build update object
+            const updateData = {
+                title,
+                content,
+                metatitle,
+                metadescription,
+                metakeywords,
+                category,
+                excerpt,
+                images: img,
+              };
+          const blog = await Blog.findByIdAndUpdate(slug, updateData, { new: true });
+      
+          if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+          }
+      
+          return res.status(200).json({ message: "Updated successfully", blog });
         } catch (error) {
-            return res.status(500).json({ message: 'Failed to update blog', error: error.message });
+          return res.status(500).json({ message: "Failed to update blog", error: error.message });
         }
-    };
+      };
+      
 
 
     //-------------------------------------------delete blog------------------------------

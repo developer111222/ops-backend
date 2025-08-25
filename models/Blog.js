@@ -27,15 +27,24 @@ const blogSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    image:[ {
+    images:[ {
         type: String,
         required: true
     }],
-    category: {
+    category: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'BlogCategory',
 
+    }],
+    excerpt: {
+        type: String,
+        required: true
     },
+    status:{
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active",
+      },
     slug:{
         type: String,
         // required: true,

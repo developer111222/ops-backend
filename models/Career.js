@@ -7,11 +7,7 @@ const careerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  slug: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+
   department: {
     type: String,
     required: true,
@@ -22,7 +18,6 @@ const careerSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['Full-time', 'Part-time', 'Contract', 'Internship'],
     required: true,
   },
   experience: {
@@ -69,15 +64,27 @@ const careerSchema = new mongoose.Schema({
     default: false,
   },
   slug:{
-    type:String,
-    required:true,
-    unique:true,
+    type: String,
+    // required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    index: true,
     default: function() {
-      return slugify(this.title, { lower: true });
+      return slugify(this.title, { lower: true, strict: true });
     }
-  }
-}, {
+
+}}, {
   timestamps: true
 });
 
+
+
+// This will generate the slug automatically before saving the document
+// careerSchema.pre('save', function (next) {
+//   if (this.isModified('title') || this.isNew) {
+//       this.slug = slugify(this.title, { lower: true, strict: true });
+//   }
+//   next();
+// });
 module.exports = mongoose.model('Career', careerSchema);

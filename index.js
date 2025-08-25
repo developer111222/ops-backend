@@ -23,18 +23,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(helmet());
 app.use(cors({
-  origin: 'http://localhost:3000', // or whatever your frontend is
-  methods: ["GET", "PUT", "POST", "DELETE","PATCH", "OPTIONS"],
+  origin: function (origin, callback) {
+    const allowedOrigins = ['http://localhost:3000', 'https://opsreality.com'];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
-      "Access-Control-Allow-Origin",
-      "Content-Type",
-      "Authorization",
-      "cookies"
+    "Content-Type",
+    "Authorization"
   ],
-  credentials: true,
-  optionsSuccessStatus: 200,
-  preflightContinue: false
+  credentials: true
 }));
+
+
 app.use(morgan('dev'));
 // app.use(xss()); // Temporarily disabled due to Express 5.x compatibility issue
 app.use(rateLimiter);

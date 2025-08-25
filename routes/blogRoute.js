@@ -10,12 +10,12 @@ const { authorizationUser,
 //-------------------------routes-------------------
 
 router.route('/create-blog').post(
-    // authorizationUser, authorizationRoles('admin'),
+    authorizationUser, authorizationRoles('admin'),
     upload.array("images", 10), uploadToCloudinary, createBlog);
-router.route('/blogs').get(getAllBlogs);
+router.route('/all-blogs').get(getAllBlogs);
 router.route('/single-blog/:id').get(getBlogBySlug)
-router.route('/update-blog/:id').patch(
-    // authorizationUser, authorizationRoles('admin'), 
+router.route('/update-blog/:id').put(
+    authorizationUser, authorizationRoles('admin'), 
      upload.array("images", 10), uploadToCloudinary, updateBlog);
 router.route('/delete-blog/:id').delete(authorizationUser,authorizationRoles('admin'),deleteBlog)
 

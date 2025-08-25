@@ -3,10 +3,20 @@ const slugify=require('slugify')
 
 
 const blogcategoryschema=new mongoose.Schema({
-    category:{
-        type:String,
-        required:true
-    },
+ 
+    categoryname: {
+        type: String,
+        required: true,
+      },
+      categorydescription: {
+        type: String,
+        required: true,
+      },
+      status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active",
+      },
     slug: {
         type: String,
         unique: true, // Ensures the slug is unique
@@ -18,8 +28,8 @@ const blogcategoryschema=new mongoose.Schema({
 
 
 blogcategoryschema.pre('save', function (next) {
-    if (this.isModified('category') || this.isNew) {
-        this.slug = slugify(this.category, { lower: true, strict: true });
+    if (this.isModified('categoryname') || this.isNew) {
+        this.slug = slugify(this.categoryname, { lower: true, strict: true });
     }
     next();
 });

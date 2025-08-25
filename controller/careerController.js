@@ -20,6 +20,7 @@ exports.addCareer = async (req, res) => {
       urgent,
       remote
     } = req.body;
+    console.log(req.body,"req.body")
 
     // Validate required fields
     if (!title || !department || !location || !type || !experience || !salary || !postedDate || !applicationDeadline || !description || !responsibilities || !requirements) {
@@ -62,56 +63,10 @@ exports.addCareer = async (req, res) => {
 // Get all careers with filtering and pagination
 exports.getAllCareers = async (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 10, 
-      department, 
-      location, 
-      type, 
-      featured, 
-      urgent, 
-      remote,
-      search 
-    } = req.query;
+  
 
-    const filter = {};
-    
-    // Apply filters
-    if (department) filter.department = department;
-    if (location) filter.location = location;
-    if (type) filter.type = type;
-    if (featured !== undefined) filter.featured = featured === 'true';
-    if (urgent !== undefined) filter.urgent = urgent === 'true';
-    if (remote !== undefined) filter.remote = remote === 'true';
-    
-    // Search functionality
-    if (search) {
-      filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { department: { $regex: search, $options: 'i' } }
-      ];
-    }
-
-    const skip = (page - 1) * limit;
-    const careers = await Career.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit));
-    
-    const total = await Career.countDocuments(filter);
-    const totalPages = Math.ceil(total / limit);
-
-    res.status(200).json({
-      careers,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages,
-        totalItems: total,
-        hasNext: page < totalPages,
-        hasPrev: page > 1
-      }
-    });
+    const careers = await Career.find();
+return    res.status(200).json(careers);
   } catch (error) {
     console.error('Error fetching careers:', error);
     res.status(500).json({ message: 'Failed to fetch careers', error: error.message });

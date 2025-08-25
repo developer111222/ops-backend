@@ -13,14 +13,16 @@ exports.addProject = async (req, res) => {
       price,
       description,
       rera,
+      video,
       amenities,
       connectivity,
       specifications,
+      map,
     } = req.body;
 
     // Cloudinary images (array)
     const images= req.cloudinaryImages;
-    console.log(images,"images")
+    console.log(req.body,"images")
 
     const newProject = new Project({
       name,
@@ -32,11 +34,13 @@ exports.addProject = async (req, res) => {
       area,
       price,
       description,
+      video,
       rera,
       images, // save array of cloudinary urls
       amenities,
       connectivity,
       specifications,
+      map,
     });
 
     await newProject.save();
@@ -68,10 +72,13 @@ exports.getAllProjects = async (req, res) => {
 //get single project
 exports.getSingleProject = async (req, res) => {
   try {
+
+    console.log(req.params.slug,"req.params.slug")
     const project = await Project.findById(req.params.slug);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
+    // console.log(project,"project")  
     res.status(200).json({ project });
   } catch (error) {
     console.error("Error fetching project:", error);
@@ -83,7 +90,44 @@ exports.getSingleProject = async (req, res) => {
 //update project
 exports.updateProject = async (req, res) => {
   try {
-    const project = await Project.findByIdAndUpdate(req.params.slug, req.body, {
+
+
+    const {
+      name,
+      location,
+      type,
+      status,
+      year,
+      units,
+      area,
+      price,
+      description,
+      rera,
+      video,
+      amenities,
+      connectivity,
+      specifications,
+      map,
+    } = req.body;
+    const images= req.cloudinaryImages;
+    const project = await Project.findByIdAndUpdate(req.params.slug, {
+      name,
+      location,
+      type,
+      status,
+      year,
+      units,
+      area,
+      price,
+      description,
+      rera,
+      video,
+      amenities,
+      connectivity,
+      specifications,
+      map,
+      images,
+    }, {
       new: true,
     });
     if (!project) {

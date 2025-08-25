@@ -68,6 +68,10 @@ const projectSchema = new mongoose.Schema({
     type: String,
     // required: true
   },
+  map:{
+    type: String,
+    // required: true
+  },
   amenities:[ {
     type: String,
     

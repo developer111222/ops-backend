@@ -33,6 +33,7 @@ const authorizationUser = async (req, res, next) => {
             return next(error);
         }
         
+        // console.log(user,"user")
         // Attach the user object to the request
         req.user = user;
         next();
@@ -58,10 +59,8 @@ const authorizationRoles = (roles) => {
         try {
             // Ensure the user is authenticated and their role is valid
             if (!req.user || !roles.includes(req.user.role)) {
-                const error = new Error("Access Denied: Insufficient permissions");
-                error.status = 403;
-                return next(error);
-            }
+                return res.status(403).json({ message: "Access Denied: Insufficient permissions" });
+              }
             next(); // User has the required role, allow them to proceed
         } catch (error) {
             next(error); // Pass error to error middleware
