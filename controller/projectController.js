@@ -90,8 +90,6 @@ exports.getSingleProject = async (req, res) => {
 //update project
 exports.updateProject = async (req, res) => {
   try {
-
-
     const {
       name,
       location,
@@ -109,8 +107,11 @@ exports.updateProject = async (req, res) => {
       specifications,
       map,
     } = req.body;
-    const images= req.cloudinaryImages;
-    const project = await Project.findByIdAndUpdate(req.params.slug, {
+
+    const newImages = req.cloudinaryImages; // uploaded images (if any)
+
+    // Build update object
+    const updateData = {
       name,
       location,
       type,
@@ -126,19 +127,28 @@ exports.updateProject = async (req, res) => {
       connectivity,
       specifications,
       map,
-      images,
-    }, {
+    };
+
+    // ✅ Only replace images if new ones were uploaded
+    if (newImages && newImages.length > 0) {
+      updateData.images = newImages;
+    }
+
+    const project = await Project.findByIdAndUpdate(req.params.slug, updateData, {
       new: true,
     });
+
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
+
     res.status(200).json({ project });
   } catch (error) {
     console.error("Error updating project:", error);
     res.status(500).json({ message: "Failed to update project" });
   }
 };
+
 
 
 

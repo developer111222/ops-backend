@@ -74,10 +74,11 @@ return    res.status(200).json(careers);
 };
 
 // Get career by slug
-exports.getCareerBySlug = async (req, res) => {
+exports.getCareerByID = async (req, res) => {
   try {
-    const { slug } = req.params;
-    const career = await Career.findOne({ slug });
+    const { id } = req.params;
+  
+    const career = await Career.findById(id);
 
     if (!career) return res.status(404).json({ message: 'Career not found' });
 

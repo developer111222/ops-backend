@@ -92,7 +92,7 @@ exports.getBlogByCategory = async (req, res) => {
 
 
 
-//-----------------------------get single blog by slug----------------------------------
+//-----------------------------get single blog by Id----------------------------------
 
 exports.getBlogBySlug = async (req, res) => {
         try {
@@ -117,11 +117,9 @@ exports.getBlogBySlug = async (req, res) => {
           const slug = req.params.id;
           const { title, content, metatitle, metadescription, metakeywords, category, excerpt } = req.body;
       
-        console.log(req.body,"req.body")
+   
       
-         const img= req.cloudinaryImages;
-      console.log(img,"img")
-
+          const newImages = req.cloudinaryImages; // uploaded images (if any)
             // Build update object
             const updateData = {
                 title,
@@ -131,8 +129,13 @@ exports.getBlogBySlug = async (req, res) => {
                 metakeywords,
                 category,
                 excerpt,
-                images: img,
+          
               };
+
+              if (newImages && newImages.length > 0) {
+                updateData.images = newImages;
+              }
+
           const blog = await Blog.findByIdAndUpdate(slug, updateData, { new: true });
       
           if (!blog) {

@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   addCareer,
   getAllCareers,
-  getCareerBySlug,
+  getCareerByID,
   deleteCareer,
   updateCareer
 } = require('../controller/careerController');
@@ -16,7 +16,7 @@ router.post('/create-careers', authorizationUser, addCareer);
 router.get('/careers', authorizationUser,authorizationRoles("admin"), getAllCareers);
 
 // Get a job by slug
-router.get('/single-careers/:slug', authorizationUser,authorizationRoles("admin"), getCareerBySlug);
+router.get('/single-careers/:id', authorizationUser,authorizationRoles("admin"), getCareerByID);
 
 // Delete a job by ID
 router.delete('/delete-careers/:id', authorizationUser,authorizationRoles("admin"), deleteCareer);

@@ -13,6 +13,7 @@ const projectRoutes = require('./routes/projectRoute');
 const careerRoutes = require('./routes/careerRoutes');
 const blogRoutes = require('./routes/blogRoute');
 const blogCategoryRoutes = require('./routes/blocategoryRoute');
+const apiKeyMiddleware = require('./middleware/apiKeyMiddleware');
 
 dotenv.config();
 const app = express();
@@ -34,22 +35,25 @@ app.use(cors({
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
-    "Authorization"
+    "Authorization",
+    "x-api-key"   // ✅ allow API key header
   ],
   credentials: true
 }));
 
+// ✅ API Key Middleware
+app.use("/api", apiKeyMiddleware);
 
 app.use(morgan('dev'));
 // app.use(xss()); // Temporarily disabled due to Express 5.x compatibility issue
 app.use(rateLimiter);
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/project', projectRoutes);
-app.use('/api/career', careerRoutes);
-app.use('/api/blog', blogRoutes);
-app.use('/api/blog-category', blogCategoryRoutes);
+app.use('/api/auth',apiKeyMiddleware, authRoutes);
+app.use('/api/project',apiKeyMiddleware, projectRoutes);
+app.use('/api/career',apiKeyMiddleware, careerRoutes);
+app.use('/api/blog',apiKeyMiddleware, blogRoutes);
+app.use('/api/blog-category',apiKeyMiddleware, blogCategoryRoutes);
 // Error Handler
 app.use(errorHandler);
 
