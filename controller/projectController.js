@@ -87,6 +87,26 @@ exports.getSingleProject = async (req, res) => {
 };
 
 
+//-----------------get project by slug
+
+exports.getSingleProjectBySlug = async (req, res) => {
+  try {
+    console.log(req.params.slug, "req.params.slug");
+
+    const project = await Project.findOne({ slug: req.params.slug });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.status(200).json({ project });
+  } catch (error) {
+    // console.error("Error fetching project:", error);
+    // res.status(500).json({ message: "Failed to fetch project" });
+  }
+};
+
+
 //update project
 exports.updateProject = async (req, res) => {
   try {

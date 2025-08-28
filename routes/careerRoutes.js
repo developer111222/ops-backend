@@ -5,7 +5,8 @@ const {
   getAllCareers,
   getCareerByID,
   deleteCareer,
-  updateCareer
+  updateCareer,
+  getCareerBySlug
 } = require('../controller/careerController');
 const {authorizationUser, authorizationRoles}=require('../middleware/authMiddleware')
 
@@ -13,9 +14,9 @@ const {authorizationUser, authorizationRoles}=require('../middleware/authMiddlew
 router.post('/create-careers', authorizationUser, addCareer);
 
 // Get all jobs
-router.get('/careers', authorizationUser,authorizationRoles("admin"), getAllCareers);
+router.get('/careers', getAllCareers);
 
-// Get a job by slug
+// Get a job by id
 router.get('/single-careers/:id', authorizationUser,authorizationRoles("admin"), getCareerByID);
 
 // Delete a job by ID
@@ -24,5 +25,7 @@ router.delete('/delete-careers/:id', authorizationUser,authorizationRoles("admin
 //update career
 router.put('/update-careers/:id', authorizationUser,authorizationRoles("admin"), updateCareer);
 
+//get career by slug
+router.get('/slug/single-careers/:slug', getCareerBySlug);
 
 module.exports = router;

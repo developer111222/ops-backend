@@ -13,7 +13,9 @@ const projectRoutes = require('./routes/projectRoute');
 const careerRoutes = require('./routes/careerRoutes');
 const blogRoutes = require('./routes/blogRoute');
 const blogCategoryRoutes = require('./routes/blocategoryRoute');
+const careerformRoutes = require('./routes/carrerformRoute');
 const apiKeyMiddleware = require('./middleware/apiKeyMiddleware');
+const path = require('path');
 
 dotenv.config();
 const app = express();
@@ -21,6 +23,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser());
 app.use(helmet());
 app.use(cors({
@@ -54,6 +57,7 @@ app.use('/api/project',apiKeyMiddleware, projectRoutes);
 app.use('/api/career',apiKeyMiddleware, careerRoutes);
 app.use('/api/blog',apiKeyMiddleware, blogRoutes);
 app.use('/api/blog-category',apiKeyMiddleware, blogCategoryRoutes);
+app.use('/api/career-form',apiKeyMiddleware, careerformRoutes);
 // Error Handler
 app.use(errorHandler);
 

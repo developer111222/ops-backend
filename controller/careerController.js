@@ -88,6 +88,20 @@ exports.getCareerByID = async (req, res) => {
   }
 };
 
+
+//get career by slug
+exports.getCareerBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const career = await Career.findOne({ slug });
+    if (!career) return res.status(404).json({ message: 'Career not found' });
+    res.status(200).json(career);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch career' });
+  }
+};
+
+
 // Delete career by ID
 exports.deleteCareer = async (req, res) => {
   try {
