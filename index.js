@@ -16,6 +16,7 @@ const blogCategoryRoutes = require('./routes/blocategoryRoute');
 const careerformRoutes = require('./routes/carrerformRoute');
 const apiKeyMiddleware = require('./middleware/apiKeyMiddleware');
 const path = require('path');
+const contactformRoutes = require('./routes/contactformRoute');
 
 dotenv.config();
 const app = express();
@@ -58,6 +59,7 @@ app.use('/api/career',apiKeyMiddleware, careerRoutes);
 app.use('/api/blog',apiKeyMiddleware, blogRoutes);
 app.use('/api/blog-category',apiKeyMiddleware, blogCategoryRoutes);
 app.use('/api/career-form',apiKeyMiddleware, careerformRoutes);
+app.use('/api/contact-form',apiKeyMiddleware, contactformRoutes);
 // Error Handler
 app.use(errorHandler);
 
@@ -69,3 +71,8 @@ mongoose.connect(process.env.MONGO_URI)
     );
   })
   .catch((err) => console.error(err));
+
+
+
+
+

@@ -94,12 +94,12 @@ exports.getBlogByCategory = async (req, res) => {
 
 //-----------------------------get single blog by Id----------------------------------
 
-exports.getBlogBySlug = async (req, res) => {
+exports.getBlogById = async (req, res) => {
         try {
             const slug = req.params.id;
             console.log(slug,"slug")
           
-            const blog = await Blog.findById( slug ).populate('author', 'username');
+            const blog = await Blog.findById( slug ).populate('author', 'username').populate('category', 'categoryname slug');
             if (!blog) return res.status(404).json({ message: 'Blog not found' });
             res.status(200).json(blog);
         } catch (error) {
@@ -109,6 +109,25 @@ exports.getBlogBySlug = async (req, res) => {
     };
 
 
+
+    //-----------------------------get single blog by slug----------------------------------
+
+
+    exports.getBlogBySlug = async (req, res) => {
+        try {
+            const slug = req.params.id;
+            console.log(slug,"slug")
+          
+            const blog = await Blog.findOne({ slug: slug }).populate('author', 'username').populate('category', 'categoryname slug');
+            if (!blog) return res.status(404).json({ message: 'Blog not found' });
+            res.status(200).json(blog);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Failed to retrieve blog', error: error.message });
+        }
+    };
+
+    
     //-----------------------------update blog----------------------------------
 
 
